@@ -2,26 +2,36 @@
 
 ## The MOS Transistor
 
-The metal-oxide-semiconductor (MOS) transistor is the fundamental active device in modern integrated circuits. It operates as a voltage-controlled switch: a voltage applied to the gate terminal modulates the conductivity of the channel between source and drain. When the gate-to-source voltage exceeds a threshold, the channel forms and current can flow; below this threshold, the device is effectively off.
+At its core, a MOS transistor is just a voltage-controlled switch. Apply enough voltage to the gate, and current flows between source and drain. Remove that voltage, and the path shuts off. That's the basic idea.
 
-Two complementary types exist. The NMOS transistor conducts when its gate voltage is high relative to its source—it passes strong logic lows and is typically connected to ground in pull-down networks. The PMOS transistor conducts when its gate voltage is low relative to its source—it passes strong logic highs and is typically connected to VDD in pull-up networks. This complementary behavior is the foundation of CMOS logic.
+There are two flavors: NMOS and PMOS. They behave oppositely. An NMOS turns on when the gate is high—it's good at pulling outputs down to ground. A PMOS turns on when the gate is low—it's good at pulling outputs up to VDD. This opposite behavior isn't a quirk; it's exactly what makes CMOS work.
 
-The gate is capacitively coupled to the channel through a thin oxide layer, meaning the transistor draws negligible DC current at its input. This high input impedance allows a single output to drive many inputs without significant loading, a property essential for building complex digital systems with thousands of interconnected gates.
+One thing worth noting: the gate draws almost no current. It's separated from the channel by oxide, so it's essentially capacitive. This means a single output can drive many gates without worrying about loading effects. That property becomes important when you're connecting thousands of gates together.
 
 ---
 
 ## The CMOS Inverter
 
-The CMOS inverter is the most fundamental building block in digital integrated circuit design. Every complex logic gate, arithmetic unit, and memory cell in modern VLSI systems derives from the principles embodied in this simple two-transistor structure. Understanding its operation is prerequisite to meaningful engagement with RTL design and ASIC implementation.
+Here's where it gets interesting. Take one NMOS, one PMOS, wire their gates together, and you get the most important circuit in digital design.
 
-As shown in the diagram, the CMOS inverter consists of a PMOS transistor connected to VDD and an NMOS transistor connected to ground, with their gates tied together at the input (VIN) and their drains connected at the output (VOUT). When VIN is low, the PMOS device conducts while the NMOS device is off, pulling VOUT to VDD. Conversely, when VIN is high, the NMOS conducts and the PMOS is off, pulling VOUT to ground. This complementary switching behavior produces logical inversion: a high input yields a low output, and vice versa.
+![CMOS Inverter](CMOS.png)
 
-The complementary arrangement is not merely convenient—it is what enables near-zero static power consumption. In either stable logic state, exactly one transistor is fully off, creating no direct current path between VDD and ground. Power is dissipated only during switching transitions when both devices conduct briefly. This characteristic makes CMOS the dominant technology for large-scale integration, where millions of transistors must coexist without prohibitive power dissipation.
+Look at the diagram above. The PMOS sits between VDD and the output. The NMOS sits between the output and ground. Both gates connect to the input.
 
-The structure also produces strong, rail-to-rail logic levels. The output is driven through a low-resistance path to either supply rail, not through a resistive divider or weak pull-up. This ensures reliable logic levels with good noise margins and clean signal transitions—properties that compound in importance as signals propagate through many logic stages.
+When the input is low, the PMOS turns on and the NMOS turns off. The output gets pulled to VDD—that's a logic high. When the input is high, the opposite happens: NMOS on, PMOS off, output pulled to ground. High in, low out. Low in, high out. That's inversion.
+
+What makes this clever is that there's never a direct path from VDD to ground in steady state. One transistor is always off. No path means no current, which means no static power. The only power you burn is during transitions, when both transistors are briefly on. This is why CMOS dominates—you can pack millions of transistors on a chip without melting it.
+
+The other benefit: strong outputs. The output is always driven hard to one rail or the other through a low-resistance transistor. No weak pull-ups, no resistor dividers. You get clean logic levels with solid noise margins.
 
 ---
 
-## Connection to Digital Design
+## Why This Matters
 
-This transistor-level understanding forms the conceptual foundation for all subsequent abstraction layers in digital design. Logic gates, standard cells, RTL modules, and synthesized netlists are ultimately implementations of these same principles at increasing levels of abstraction. Recognizing how complementary conduction, power efficiency, and signal integrity emerge from the basic inverter structure enables informed decision-making throughout the ASIC design flow.
+![Basic Inverter Symbol](Inverter.png)
+
+At higher levels of abstraction, we draw inverters as simple triangles with a bubble. We don't think about transistors when writing Verilog or running synthesis. But the transistor-level behavior is still there underneath, and it shapes everything.
+
+When you see a timing report complaining about setup violations, that's transistors switching too slowly. When power analysis flags high dynamic power, that's gate capacitances charging and discharging. The abstractions are useful, but they're not magic—they're built on this stuff.
+
+I find it helpful to keep this picture in mind even when working at RTL. It grounds the abstractions in something physical and makes the design trade-offs easier to reason about.
