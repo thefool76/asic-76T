@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-I built this project to prepare for graduate study in VLSI and semiconductor engineering. My goal was straightforward: understand the complete digital ASIC design flow from transistors to GDSII, and do it by actually building things rather than just reading about them.
+I built this project to prepare for undergraduate study in VLSI and semiconductor engineering. My goal was straightforward: understand the complete digital ASIC design flow from transistors to GDSII, and do it by actually building things rather than just reading about them.
 
 This was an accelerated, self-driven effort over a short period. I do not claim production-level expertise—this is documentation of a learning process. What I can say is that I now understand why each step in the ASIC flow exists and how the pieces connect.
 
@@ -105,12 +105,12 @@ The structure follows the design flow, not the order I studied things. Each fold
 
 ## Academic Relevance
 
-This project gives me a foundation for graduate level VLSI coursework. I am not starting from zero—I understand the flow, I have used the tools, and I know where the hard problems are. Topics like low-power design, high-speed circuits, and design automation will build on this base rather than introducing it from scratch.
+This project gives me a foundation for undergraduate level VLSI coursework. I am not starting from zero—I understand the flow, I have used the tools, and I know where the hard problems are. Topics like low-power design, high-speed circuits, and design automation will build on this base rather than introducing it from scratch.
 
-Graduate study will deepen what I have started here through formal device physics, advanced circuit techniques, and experience with commercial tools and modern process nodes.
+Undergraduate study will deepen what I have started here through formal device physics, advanced circuit techniques, and experience with commercial tools and modern process nodes.
 
 ## Closing Note
 
-This repository documents what I actually did and learned. Everything here is reproducible with the listed open-source tools. I built this to prepare for graduate study and to demonstrate genuine engagement with the material.
+This repository documents what I actually did and learned. Everything here is reproducible with the listed open-source tools. I built this to prepare for undergraduate study and to demonstrate genuine engagement with the material.
 
 I welcome corrections and suggestions.
