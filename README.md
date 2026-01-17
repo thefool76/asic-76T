@@ -2,62 +2,62 @@
 
 ## Project Overview
 
-This repository documents a self-directed, accelerated study of application-specific integrated circuit (ASIC) design fundamentals. The project was undertaken as preparation for graduate study in VLSI and semiconductor engineering, with the explicit goal of building foundational competence across the complete digital ASIC design flow—from transistor-level understanding to physical implementation.
+I built this project to prepare for graduate study in VLSI and semiconductor engineering. My goal was straightforward: understand the complete digital ASIC design flow from transistors to GDSII, and do it by actually building things rather than just reading about them.
 
-The work presented here reflects a learning-by-building approach: rather than passive study, each concept was reinforced through hands-on implementation using industry-standard open-source tools. This project does not claim production-level expertise; it represents an earnest effort to establish the conceptual and practical foundations necessary for rigorous graduate coursework and research.
+This was an accelerated, self-driven effort over a short period. I do not claim production-level expertise—this is documentation of a learning process. What I can say is that I now understand why each step in the ASIC flow exists and how the pieces connect.
 
 ## Scope of Work
 
-### Topics Covered
+### What This Project Covers
 
-- **CMOS Fundamentals**: Operation of NMOS and PMOS transistors, complementary logic, static power dissipation, and basic switching characteristics
-- **Digital Logic Abstraction**: Boolean algebra, combinational and sequential logic, finite state machines, and the abstraction hierarchy from transistors to functional blocks
-- **RTL Design and Simulation**: Synthesizable Verilog coding, testbench development, functional verification, and waveform analysis
-- **ASIC Synthesis**: Translation of RTL to gate-level netlists, timing constraints, and optimization trade-offs
-- **Physical Design**: Floorplanning, placement, clock tree synthesis, routing, and design rule checking using the OpenLane flow
-- **Fabrication Mapping**: Conceptual understanding of how GDSII layout data corresponds to mask generation and silicon fabrication
+- **CMOS Fundamentals**: How NMOS and PMOS transistors work, why complementary logic eliminates static power, basic switching behavior
+- **Digital Logic Abstraction**: Boolean algebra, combinational and sequential circuits, FSMs, and how we get from transistors to useful building blocks
+- **RTL Design and Simulation**: Writing synthesizable Verilog, building testbenches, running simulations, interpreting waveforms
+- **ASIC Synthesis**: Getting from RTL to gates, working with timing constraints, reading synthesis reports
+- **Physical Design**: Floorplanning, placement, CTS, routing, and DRC using OpenLane
+- **Fabrication Mapping**: Understanding what GDSII actually represents and how it becomes silicon
 
-### Intentionally Out of Scope
+### What I Did Not Cover
 
 - Analog and mixed-signal design
-- Custom cell library development
-- Advanced timing closure techniques (multi-corner multi-mode analysis)
-- Post-silicon validation and testing
-- Design for manufacturability at advanced nodes
+- Building custom cell libraries
+- Multi-corner multi-mode timing closure
+- Post-silicon validation
+- DFM considerations for advanced nodes
 
-These topics require deeper specialization and are deferred to formal graduate study.
+
 
 ## Technical Workflow
 
-The ASIC design process follows a well-defined progression from abstract specification to physical implementation. This section outlines each stage and its significance.
+The ASIC flow has a logical order, and understanding that order matters. Here is how I approached each stage.
 
 ### Transistor-Level Understanding
 
-CMOS transistors form the physical substrate of all digital logic. Understanding how NMOS and PMOS devices function as voltage-controlled switches—and how their complementary arrangement eliminates static power dissipation—provides essential intuition for interpreting synthesis results and power analysis.
+Before writing any Verilog, I spent time understanding what is actually happening at the device level. CMOS transistors are voltage-controlled switches, and the complementary arrangement is not arbitrary—it is what makes static power negligible. This foundation helps later when interpreting power reports or understanding why certain RTL structures synthesize poorly.
 
 ### RTL Design
 
-Register-transfer level (RTL) design abstracts hardware behavior into synchronous data transfers between registers. Verilog serves as the hardware description language for specifying this behavior. Writing synthesizable RTL requires discipline: the designer must distinguish between constructs that describe hardware and those that exist only for simulation.
+RTL describes hardware as data moving between registers on clock edges. Writing Verilog that actually synthesizes to hardware (not just simulates correctly) requires care. I learned to avoid constructs that only exist in simulation and to think about what the synthesizer will produce.
 
 ### Simulation and Verification
 
-Functional simulation validates that the RTL behaves as intended before committing to synthesis. Testbenches apply stimulus and check outputs against expected results. This step catches logical errors early, when they are inexpensive to correct.
+Simulation catches mistakes before they become expensive. I wrote testbenches to apply inputs and check outputs against expected behavior. This is where most debugging happens, and it should—fixing a bug in RTL costs nothing compared to fixing it after tapeout.
 
 ### Synthesis
 
-Synthesis maps RTL descriptions to a target cell library, producing a gate-level netlist. The synthesizer optimizes for timing, area, and power subject to user-defined constraints. Understanding synthesis reports is essential for diagnosing timing violations and resource utilization.
+Synthesis translates RTL into a netlist of standard cells from a target library. The synthesizer optimizes for timing, area, and power based on constraints I provide. Learning to read synthesis reports—understanding where timing is tight, what is using the most area—was more useful than I expected.
 
 ### Floorplanning and Placement
 
-Floorplanning defines the physical die area and positions major functional blocks. Placement assigns specific locations to each standard cell. Decisions at this stage directly impact timing closure and routability; poor placement can make a design unroutable regardless of RTL quality.
+Floorplanning sets the die size and positions major blocks. Placement assigns locations to every standard cell. I learned that bad placement can make a design unroutable even if the RTL is fine. Physical design is not just "push button after synthesis."
 
 ### Routing and Verification
 
-Routing connects placed cells according to the netlist, respecting metal layer constraints and design rules. After routing, design rule checking (DRC) and layout versus schematic (LVS) verification confirm that the physical design is manufacturable and functionally equivalent to the netlist.
+Routing connects everything according to the netlist while respecting metal layer rules. After routing, DRC checks that the layout is manufacturable and LVS checks that it matches the schematic. These steps exist because errors here mean dead silicon.
 
 ### GDSII Generation
 
-The final layout is exported in GDSII format, the standard interchange format for mask data. This file defines the geometric patterns that will be transferred to silicon through photolithography. Understanding this mapping—from polygons to fabricated structures—completes the conceptual link between design and manufacturing.
+GDSII is the final output—geometric data that defines mask patterns for fabrication. Understanding that these polygons become actual structures on a wafer was clarifying. It connected everything upstream to the physical reality of manufacturing.
 
 ## Tools and Technologies
 
@@ -65,52 +65,52 @@ The final layout is exported in GDSII format, the standard interchange format fo
 |----------|-------------------|
 | HDL | Verilog |
 | Simulation | Icarus Verilog, GTKWave |
-| Synthesis and Physical Design | OpenLane (RTL-to-GDSII flow) |
-| Process Design Kit | SkyWater SKY130 (130nm open-source PDK) |
+| Synthesis and PD | OpenLane |
+| PDK | SkyWater SKY130 |
 | Layout Viewer | KLayout |
 
-### Rationale for Open-Source Tools
+### Why Open-Source Tools
 
-Open-source EDA tools and the SKY130 PDK provide meaningful exposure to industrial ASIC design flows without requiring proprietary licenses. While commercial tools offer superior optimization and broader process node support, the fundamental concepts—synthesis constraints, timing analysis, physical design trade-offs—remain consistent. Proficiency with open-source flows demonstrates both resourcefulness and genuine understanding, as these tools require the user to engage directly with design decisions that commercial GUIs may obscure.
+I used open-source tools because they are accessible and because they force you to understand what is happening. Commercial tools have better optimization and polish, but the core concepts—constraints, timing, physical design trade-offs—are the same. Working with OpenLane meant I could not hide behind a GUI; I had to understand the flow.
 
 ## Repository Structure
 
 ```
 ├── fundamentals/
-│   └── CMOS theory, logic gate analysis, and transistor-level exercises
+│   └── CMOS theory, logic gate exercises
 ├── rtl/
-│   └── Verilog source files for designed modules
+│   └── Verilog source files
 ├── testbench/
-│   └── Simulation testbenches and verification scripts
+│   └── Testbenches and verification scripts
 ├── synthesis/
-│   └── Synthesis scripts, constraint files, and timing reports
+│   └── Constraint files, synthesis scripts, reports
 ├── physical_design/
-│   └── OpenLane configuration, floorplans, and layout outputs
+│   └── OpenLane configs, floorplans, layout outputs
 ├── gdsii/
-│   └── Final GDSII files and DRC/LVS reports
+│   └── Final GDSII, DRC/LVS reports
 └── docs/
-    └── Notes on concepts, workflow documentation, and references
+    └── Notes and references
 ```
 
-The structure reflects the logical progression of the ASIC flow rather than chronological order of study. Each directory is self-contained, with relevant scripts and documentation co-located with design artifacts.
+The structure follows the design flow, not the order I studied things. Each folder is self-contained.
 
 ## Key Learning Outcomes
 
-- Developed working intuition for CMOS operation and its implications for power and delay
-- Acquired proficiency in writing synthesizable Verilog and structuring testbenches for verification
-- Gained practical experience with the RTL-to-GDSII flow using OpenLane
-- Understood the role of timing constraints and their impact on synthesis and placement
-- Recognized the relationship between physical design decisions and manufacturability
-- Appreciated the abstraction hierarchy that enables tractable design of complex systems
+- I understand how CMOS transistors work and why that matters for power and timing
+- I can write synthesizable Verilog and build testbenches that actually catch bugs
+- I have run the full RTL-to-GDSII flow using OpenLane and can interpret the outputs
+- I understand what timing constraints do and how they affect synthesis and placement
+- I recognize why physical design decisions impact manufacturability
+- I see how each abstraction layer connects to the ones above and below it
 
 ## Academic Relevance
 
-This project establishes the foundational knowledge expected at the start of graduate-level VLSI coursework. Familiarity with the complete ASIC flow—from RTL through physical design—provides context for advanced topics such as low-power design, high-speed signaling, and design-for-test. The hands-on experience with synthesis and place-and-route prepares the student to engage meaningfully with research problems in physical design automation, timing optimization, and emerging device technologies.
+This project gives me a foundation for graduate level VLSI coursework. I am not starting from zero—I understand the flow, I have used the tools, and I know where the hard problems are. Topics like low-power design, high-speed circuits, and design automation will build on this base rather than introducing it from scratch.
 
-Graduate study will deepen this foundation through formal treatment of device physics, advanced circuit techniques, and exposure to state-of-the-art commercial tools and process nodes.
+Graduate study will deepen what I have started here through formal device physics, advanced circuit techniques, and experience with commercial tools and modern process nodes.
 
 ## Closing Note
 
-This repository is offered as transparent documentation of a self-directed learning effort. All designs, scripts, and results are reproducible using the open-source tools specified. The work reflects genuine engagement with ASIC design fundamentals, undertaken with the motivation to build a solid foundation for graduate study and long-term contribution to the semiconductor field.
+This repository documents what I actually did and learned. Everything here is reproducible with the listed open-source tools. I built this to prepare for graduate study and to demonstrate genuine engagement with the material.
 
-Feedback, corrections, and suggestions for improvement are welcomed.
+I welcome corrections and suggestions.
