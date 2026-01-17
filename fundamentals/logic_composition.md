@@ -1,66 +1,63 @@
 # From CMOS to Digital Logic
 
-## Boolean Logic: The Abstraction Layer
+## Okay, So We Have Transistors. Now What?
 
-Once you understand that CMOS gives you reliable switching between high and low, you can stop thinking about transistors and start thinking about logic. That's the abstraction.
+Once I got the CMOS inverter, something clicked. You've got a switch that reliably goes high or low. That's it. That's the building block. Everything else is just stacking these switches in clever ways.
 
-Boolean algebra maps onto CMOS naturally. A high voltage is TRUE, low is FALSE. AND, OR, NOT—these aren't just mathematical concepts, they're things you can build with transistors. The inverter I covered earlier is just a physical NOT gate. Stack a few more transistors and you get AND, OR, NAND, NOR.
+Boolean algebra suddenly makes sense in a physical way. High voltage? That's TRUE. Low? FALSE. An inverter is literally just a NOT gate built from transistors. Add a few more transistors in the right configuration and you've got AND, OR, NAND, NOR. It's not abstract math anymore—it's circuits.
 
-The power of this abstraction is that you can reason about behavior without worrying about voltage levels or switching speeds. You work with truth tables and logic expressions. The transistors are still there, doing their thing underneath, but you don't have to think about them constantly.
-
----
-
-## NAND and NOR Are Universal
-
-This is one of those facts that sounds academic but matters a lot in practice: NAND and NOR gates are universal. Any Boolean function—no matter how complicated—can be implemented using only NAND gates. Same goes for NOR.
-
-Think about what that means. You don't need a library with dozens of different gate types. In theory, you could build an entire processor using nothing but NANDs. You wouldn't want to, but you could.
-
-Why NAND and NOR specifically? A few reasons:
-
-**Simple CMOS implementation.** A 2-input NAND is just 4 transistors—two PMOS in parallel, two NMOS in series. Clean, symmetric, easy to lay out. AND gates actually require more transistors because you need to invert the NAND output.
-
-**Good noise margins.** The complementary structure gives you strong drive in both directions. Outputs switch cleanly between rails.
-
-**Layout-friendly.** Standard-cell libraries are built around NAND and NOR variants. When synthesis tools map your RTL to gates, they're mostly picking from these. Understanding this helps when you're reading gate-level netlists or optimizing for area.
+The nice thing is, once you trust that the transistors work, you can forget about them. You stop thinking "okay the PMOS turns on when..." and start thinking "if A AND B, then output is high." That's the abstraction doing its job.
 
 ---
 
-## Combinational Building Blocks
+## NAND and NOR: The Only Gates You Actually Need
 
-With universal gates as your foundation, you can build anything combinational. Multiplexers, decoders, adders, comparators—they're all just structured arrangements of NAND/NOR logic.
+Here's something I didn't expect: you can build literally any digital circuit using just NAND gates. Or just NOR gates. Pick one, and you're set. They call these "universal gates."
 
-Take a half adder. Two inputs, two outputs: sum and carry. The sum is XOR, the carry is AND. Both can be decomposed into NANDs. Chain half adders together with some extra logic and you get a full adder. Chain full adders and you get a ripple-carry adder. Keep going and you're building ALUs.
+Sounds like trivia, right? But it's not. This is why standard-cell libraries aren't stuffed with hundreds of exotic gates. They're mostly NAND and NOR variants with different drive strengths. When your synthesis tool crunches through RTL and spits out a netlist, it's picking from these.
 
-The pattern here is composition. Small pieces combine into larger pieces. Each level hides the complexity of the level below. That's how you go from transistors to functional units without losing your mind.
+Why did NAND and NOR win? I dug into this:
 
----
+A 2-input NAND is dead simple in CMOS. Four transistors. Two PMOS in parallel up top, two NMOS in series on the bottom. Symmetric, easy to lay out, efficient. Want a plain AND gate? That's actually a NAND plus an inverter—more transistors. NAND is cheaper.
 
-## How Composition Scales
+Same story with noise margins. Both transistors drive the output hard toward the rails. No weak pull-ups, no resistive nonsense. Clean switching.
 
-This compositional structure is what makes complex systems tractable. Nobody designs a CPU by placing individual transistors. Instead:
-
-- Transistors form gates
-- Gates form functional blocks (adders, muxes, registers)
-- Blocks form execution units
-- Units form cores
-- Cores form chips
-
-At each level, you work with the abstractions provided by the level below. When you write RTL, you're describing behavior in terms of registers and combinational logic. Synthesis turns that into gates. Place-and-route turns gates into physical layout. The abstractions stack.
-
-What I find useful about understanding this hierarchy is that it demystifies the whole flow. RTL isn't magic—it's a description that eventually becomes gates that eventually become transistors. Knowing what's at the bottom makes the layers above feel less arbitrary.
+And layout loves them. Regular structures, predictable timing. There's a reason every PDK has a dozen NAND variants and way fewer of anything else.
 
 ---
 
-## Practical Implications
+## Building Blocks: It's Just Composition
 
-When synthesis reports tell you a design has 50,000 gates, those gates are mostly NAND, NOR, and their inverting variants. When timing analysis shows critical paths through chains of logic, those chains are these same gates switching one after another.
+Once you've got universal gates, you can build anything. Muxes, decoders, adders—they're all just gates wired together in patterns.
 
-Understanding that NAND/NOR dominate the physical implementation helps when:
+I like thinking about adders because they show the composition clearly. A half adder is two gates: XOR for the sum, AND for the carry. Break the XOR down and it's four NANDs. So a half adder is just... NANDs.
 
-- Reading synthesis reports
-- Estimating area and power roughly
-- Understanding why some RTL structures synthesize better than others
-- Debugging timing at the gate level
+Chain two half adders with an OR and you've got a full adder. Chain a bunch of full adders and you've got a ripple-carry adder. Keep going and you're building an ALU. At no point do you need anything fancier than the gates you started with. You just keep composing.
 
-It's not something you think about every day, but it's useful to have in your mental model.
+That's the trick. Small things combine into bigger things. Each layer hides what's below it. You don't think about transistors when you're wiring up a full adder, and you don't think about full adders when you're writing RTL for a processor. The abstractions stack.
+
+---
+
+## Zooming Out: How This Scales to Real Chips
+
+Nobody designs a modern chip by placing transistors. The hierarchy goes something like:
+
+- Transistors → gates
+- Gates → small blocks (adders, muxes, registers)
+- Blocks → functional units (ALUs, register files)
+- Units → cores
+- Cores → chips
+
+Each level works with abstractions from the level below. When I write RTL, I'm describing registers and combinational logic. Synthesis turns that into gates. Place-and-route turns gates into physical layout. GDSII turns layout into masks.
+
+What clicked for me is that RTL isn't magic. It's just a higher-level description that eventually compiles down to gates, which compile down to transistors. Once you see the full stack, everything feels less mysterious.
+
+---
+
+## Why I'm Glad I Learned This
+
+Honestly, you don't think about NAND gates every day when writing Verilog. But knowing they're there helps in specific moments:
+
+When synthesis tells me I've got 50k gates, I know what that actually means. When timing analysis shows a long path through combinational logic, I can picture the gates switching in sequence. When some RTL construct synthesizes weirdly, I have a mental model for why.
+
+It's background knowledge. Most of the time it just sits there. But when you need it, you really need it. And it makes the whole ASIC flow feel less like a black box.
