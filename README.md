@@ -74,6 +74,11 @@ Design rule checking (DRC) confirms manufacturability. Layout versus schematic (
 ### GDSII Generation
 
 GDSII encodes geometric mask data for fabrication. The file defines polygon shapes that correspond to physical structures on the manufactured die.
+- `top.gds`: Final layout for the `top` design, which integrates both the counter and adder modules.
+![Top Gdsi View from Tiny Tapout Viewer](gdsii/Top.png)
+
+- `counter_only.gds`: Layout generated for the standalone counter design.
+![Counter GDSI View from Tiny tapout Viewer](gdsii/Counter.png)
 
 ---
 
