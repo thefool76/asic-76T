@@ -5,7 +5,10 @@ This folder contains the final layout outputs I generated using the OpenLane RTL
 ## Files in this folder
 
 - `top.gds`: Final layout for the `top` design, which integrates both the counter and adder modules.
+![Top Gdsi View from Tiny Tapout Viewer](Top.png)
+
 - `counter_only.gds`: Layout generated for the standalone counter design.
+![Counter GDSI View from Tiny tapout Viewer](Counter.png)
 
 ## What I implemented
 
